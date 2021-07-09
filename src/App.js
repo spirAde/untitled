@@ -1,24 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { AmazonPage, ShopifyPage, SquarePage } from './pages';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div>
+        <h2>Ecommerce</h2>
+        <Switch>
+          <Route exact path="/shopify" component={ShopifyPage} />
+          <Route path="/square" component={SquarePage} />
+          <Route path="/amazon" component={AmazonPage} />
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
