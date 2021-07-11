@@ -8,3 +8,4 @@ export { default as IntroStep } from './IntroStep';
 export { default as InvoiceDateStep } from './InvoiceDateStep';
 export { default as MappingsStep } from './MappingsStep';
 export { default as SuccessStep } from './SuccessStep';
+export { default as InstallStep } from './InstallStep';

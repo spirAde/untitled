@@ -1,44 +1,35 @@
-import React, { useEffect } from 'react';
-import { useMachine } from '@xstate/react';
-import { inspect } from '@xstate/inspect';
-import { SUCCESS_EVENT, ERROR_EVENT } from '../constants';
+import React, { useState } from 'react';
+import deepmerge from 'deepmerge';
 
-inspect({
-  url: 'https://statecharts.io/inspect',
-  iframe: false,
-});
+const isFunction = (fn) => typeof fn === 'function';
+const capitalize = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
 
-const ActivationFlow = ({ steps, machine }) => {
-  const [state, send, service] = useMachine(machine, { devTools: true });
+const ActivationFlow = ({ steps, initialState }) => {
+  const [state, setState] = useState(initialState);
 
-  useEffect(() => {
-    const subscription = service.subscribe((state) => {
-      console.log(state.value, state.context);
-    });
+  const currentStepName = state.step;
+  const currentStep = steps[currentStepName];
 
-    return subscription.unsubscribe;
-  }, [service]);
+  const StepComponent = currentStep.component;
 
-  const stepKeys = Object.keys(steps);
-  const currentStep = Object.keys(state.value)[0];
-  const StepComponent = steps[currentStep] || null;
+  console.log('current state', state);
 
-  console.log(currentStep);
+  const handleSubmit = (payload) => {
+    const updatedState = deepmerge(state, payload || {});
+    const nextStep = isFunction(currentStep?.nextStep)
+      ? currentStep.nextStep(updatedState)
+      : currentStep.nextStep;
 
-  const handleSuccessCurrentStep = (payload) => send({ type: SUCCESS_EVENT, payload });
-  const handleErrorCurrentStep = (payload) => send({ type: ERROR_EVENT, payload });
+    setState({ ...updatedState, step: nextStep });
+  };
 
   return (
     <div>
-      <div>ActivationFlow</div>
+      <h2>{capitalize(state.storeType)} Activation Flow</h2>
       <div>
-        {StepComponent && (
-          <StepComponent
-            {...state.context}
-            onSuccess={handleSuccessCurrentStep}
-            onError={handleErrorCurrentStep}
-          />
-        )}
+        {StepComponent && <StepComponent {...state} onSubmit={handleSubmit} />}
       </div>
     </div>
   );

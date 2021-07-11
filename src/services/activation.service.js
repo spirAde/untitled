@@ -1,9 +1,13 @@
+export const isNewUser = ({ errors }) => {
+  return !!errors['PHONE_STEP'];
+}
+
 export const isUserAlreadyLoggedIn = ({ user }) => {
   return user !== null;
 };
 
-export const isNotEnoughInformationAboutUser = ({ user }) => {
-  return !user?.email || !user?.nickname;
+export const hasUserFullInformation = ({ user }) => {
+  return user.email && user.nickname;
 };
 
 export const isUserAlreadyActivated = ({ user }) => {
@@ -32,6 +36,5 @@ export const isXeroAlreadyConnected = ({ companies, activeCompanyId }) => {
 };
 
 export const hasUserAlreadyBoughtAnyProducts = ({ contracts }) => {
-  console.log('hasUserAlreadyBoughtAnyProducts', contracts);
   return contracts.some((contract) => contract.status === 'active');
 };

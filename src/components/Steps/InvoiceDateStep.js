@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { isStoreAlreadySetUp } from '../../services/activation.service';
 import Loading from '../Loading';
 
-const InvoiceDateStep = ({ store, onSuccess }) => {
-  console.log('InvoiceDateStep');
-  const [date, setDate] = useState('');
+const InvoiceDateStep = ({ store, onSubmit }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [date, setDate] = useState('');
 
   useEffect(() => {
     if (isStoreAlreadySetUp({ store })) {
-      onSuccess();
+      onSubmit();
       return;
     }
 
@@ -17,7 +16,7 @@ const InvoiceDateStep = ({ store, onSuccess }) => {
   }, []);
 
   const handleSubmit = () =>
-    onSuccess({
+    onSubmit({
       store: {
         ...store,
         invoiceFromDate: date,
@@ -29,7 +28,7 @@ const InvoiceDateStep = ({ store, onSuccess }) => {
   if (isLoading) {
     return (
       <div>
-        <div>Company Step</div>
+        <h3>Invoice Date Step</h3>
         <Loading />
       </div>
     );
@@ -37,7 +36,7 @@ const InvoiceDateStep = ({ store, onSuccess }) => {
 
   return (
     <div>
-      <div>Invoice Date Step</div>
+      <h3>Invoice Date Step</h3>
       <div>
         <input placeholder="Invoice Date" value={date} onChange={handleChange} />
       </div>

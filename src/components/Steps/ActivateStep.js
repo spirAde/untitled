@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { getStoresSuccess, activateUserSuccess, activateStoreSuccess } from '../../utils/requester';
+import {
+  getStoresSuccess,
+  activateUserSuccess,
+  activateStoreSuccess,
+  getUserContractsSuccess
+} from '../../utils/requester';
 import {
   areUserAndStoreAlreadyActivated,
   isUserAlreadyActivated,
@@ -7,9 +12,9 @@ import {
 } from '../../services/activation.service';
 import Loading from '../Loading';
 
-const ActivateStep = ({ user, onSuccess }) => {
-  const [store, setStore] = useState(null);
+const ActivateStep = ({ user, onSubmit }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [store, setStore] = useState(null);
 
   useEffect(() => {
     const getInitialState = async () => {
@@ -23,12 +28,13 @@ const ActivateStep = ({ user, onSuccess }) => {
         setStore(currentStore);
 
         if (areUserAndStoreAlreadyActivated({ user, store: currentStore })) {
-          onSuccess({ store: currentStore });
+          const { contracts } = await getUserContractsSuccess();
+          onSubmit({ contracts, store: currentStore });
+          return;
         }
-      } catch (error) {
-      } finally {
+
         setIsLoading(false);
-      }
+      } catch (error) {}
     };
 
     getInitialState();
@@ -37,13 +43,15 @@ const ActivateStep = ({ user, onSuccess }) => {
   if (isLoading) {
     return (
       <div>
-        <div>Activate Step</div>
+        <h3>Activate Step</h3>
         <Loading />
       </div>
     );
   }
 
   const handleSubmit = async () => {
+    setIsLoading(true);
+
     if (!isUserAlreadyActivated({ user })) {
       await activateUserSuccess();
     }
@@ -52,12 +60,15 @@ const ActivateStep = ({ user, onSuccess }) => {
       await activateStoreSuccess();
     }
 
-    onSuccess({ store });
+    const { contracts } = await getUserContractsSuccess();
+
+    setIsLoading(false);
+    onSubmit({ store, contracts });
   };
 
   return (
     <div>
-      <div>Activate Step</div>
+      <h3>Activate Step</h3>
       <div>
         <button onClick={handleSubmit}>NEXT</button>
       </div>

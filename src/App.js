@@ -5,7 +5,7 @@ function App() {
   return (
     <Router>
       <div>
-        <h2>Ecommerce</h2>
+        <h1>Ecommerce</h1>
         <Switch>
           <Route exact path="/shopify" component={ShopifyPage} />
           <Route path="/square" component={SquarePage} />

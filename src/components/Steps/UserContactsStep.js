@@ -1,9 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { registerSuccess, updateUserSuccess } from '../../utils/requester';
+import { hasUserFullInformation } from '../../services/activation.service';
+import Loading from '../Loading';
 
-const UserContactsStep = ({ user, onSuccess }) => {
+const UserContactsStep = ({ user, onSubmit }) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [nickname, setNickname] = useState('');
   const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    if (hasUserFullInformation({ user })) {
+      onSubmit();
+      return;
+    }
+
+    setIsLoading(false);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div>
+        <h3>User Contacts Step</h3>
+        <Loading />
+      </div>
+    );
+  }
 
   const handleChangeNickname = (event) => setNickname(event.target.value);
   const handleChangeEmail = (event) => setEmail(event.target.value);
@@ -11,7 +32,7 @@ const UserContactsStep = ({ user, onSuccess }) => {
   const handleUpdateUser = async () => {
     try {
       await updateUserSuccess();
-      onSuccess();
+      onSubmit({ user: { email, nickname } });
     } catch (error) {
       console.log('UserContactsStep', error);
     }
@@ -22,7 +43,7 @@ const UserContactsStep = ({ user, onSuccess }) => {
       const { token, user } = await registerSuccess();
       await updateUserSuccess();
 
-      onSuccess({ user, token });
+      onSubmit({ user, token });
     } catch (error) {
       console.log('UserContactsStep', error);
     }
@@ -35,7 +56,7 @@ const UserContactsStep = ({ user, onSuccess }) => {
 
   return (
     <div>
-      <div>UserContactsStep</div>
+      <h3>User Contacts Step</h3>
       <div>
         <label>
           Nickname

@@ -52,23 +52,35 @@ export const registerSuccess = () =>
 export const registerError = () =>
   request(400, {
     error: true,
-    message: 'Something went wrong',
+    message: 'registerError: Something went wrong',
   });
 
 export const updateUserSuccess = () => request(200, {});
 
 export const activateUserSuccess = () => request(200, {});
 
-export const getStoresSuccess = ({ status = 'active', type = 'shopify' }) =>
-  request(200, {
+export const getStoresSuccess = ({ status = 'active', type = 'shopify' }) => {
+  return request(200, {
     stores: stores.filter((store) => store.status === status && store.type === type),
   });
+}
+
+export const getStoresError = () => request(400, {
+  error: true,
+  message: 'getStoresError: Something went wrong',
+});
 
 export const activateStoreSuccess = () => request(200, {});
 
 export const getMappingsSuccess = () => request(200, {});
 
-export const getUserContractsSuccess = () =>
-  request(200, {
+export const getUserContractsSuccess = () => {
+  return  request(200, {
     contracts,
   });
+}
+
+export const getUserContractsError = () => request(400, {
+  error: true,
+  message: 'getUserContractsError: Something went wrong',
+});

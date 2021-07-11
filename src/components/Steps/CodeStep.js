@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { sendCodeSuccess, sendPhoneNumberError } from '../../utils/requester';
+import { sendCodeSuccess, sendPhoneNumberError, getMeSuccess } from '../../utils/requester';
 
-const CodeStep = ({ onSuccess }) => {
+const CodeStep = ({ onSubmit }) => {
   const [code, setPhone] = useState('');
 
   const handleChange = (event) => setPhone(event.target.value);
 
   const handleSubmit = async () => {
     try {
-      const { token, user } = await sendCodeSuccess();
-      onSuccess({ token, user });
+      const { token } = await sendCodeSuccess();
+      const data = await getMeSuccess({ userStatus: 'active', companiesLength: 1 });
+      onSubmit({ token, ...data });
     } catch (error) {
       console.log('CodeStep', error);
     }
@@ -17,7 +18,7 @@ const CodeStep = ({ onSuccess }) => {
 
   return (
     <div>
-      <div>CodeStep</div>
+      <h3>Code Step</h3>
       <div>
         <label>
           Code

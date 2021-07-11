@@ -1,32 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import Loading from '../Loading';
 
-const CompanyStep = ({ companies, onSuccess }) => {
-  const [activeCompanyId, setActiveCompanyId] = useState(null);
+const CompanyStep = ({ companies, onSubmit }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [activeCompanyId, setActiveCompanyId] = useState(null);
 
   useEffect(() => {
     if (companies.length === 1) {
-      onSuccess({ activeCompanyId: companies[0].id });
+      onSubmit({ activeCompanyId: companies[0].id });
+      return;
     }
+
     setIsLoading(false);
   }, []);
-
-  const handleSubmit = () => onSuccess({ activeCompanyId });
-
-  const handleChange = (event) => setActiveCompanyId(Number(event.target.value));
 
   if (isLoading) {
     return (
       <div>
-        <div>Company Step</div>
+        <h3>Company Step</h3>
         <Loading />
       </div>
     );
   }
 
+  const handleSubmit = () => onSubmit({ activeCompanyId });
+
+  const handleChange = (event) => setActiveCompanyId(Number(event.target.value));
+
   const renderedRadio = companies.map((company) => (
-    <label>
+    <label key={company.id}>
       <input
         type="radio"
         value={company.id}
@@ -39,7 +41,7 @@ const CompanyStep = ({ companies, onSuccess }) => {
 
   return (
     <div>
-      <div>Company Step</div>
+      <h3>Company Step</h3>
       <div>{renderedRadio}</div>
       <div>
         <button onClick={handleSubmit}>NEXT</button>

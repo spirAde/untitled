@@ -1,24 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { sendPhoneNumberSuccess, sendPhoneNumberError } from '../../utils/requester';
+import { isUserAlreadyLoggedIn } from '../../services/activation.service';
+import Loading from '../Loading';
 
-const PhoneStep = ({ onSuccess, onError }) => {
+const PhoneStep = ({ user, onSubmit }) => {
+  const [isLoading, setIsLoading] = useState(true);
   const [phone, setPhone] = useState('');
+
+  useEffect(() => {
+    if (isUserAlreadyLoggedIn({ user })) {
+      onSubmit();
+      return;
+    }
+
+    setIsLoading(false);
+  }, []);
 
   const handleChange = (event) => setPhone(event.target.value);
 
   const handleSubmit = async () => {
     try {
       const { verificationToken, email } = await sendPhoneNumberSuccess();
-      onSuccess({ phone, verificationToken, email });
+      onSubmit({ phone, verificationToken, email });
     } catch (error) {
-      console.log('PhoneStep', error);
-      onError({ error });
+      onSubmit({ errors: { PHONE_STEP: error } });
     }
   };
 
+  if (isLoading) {
+    return (
+      <div>
+        <h3>Phone Step</h3>
+        <Loading />
+      </div>
+    );
+  }
+
   return (
     <div>
-      <div>PhoneStep</div>
+      <h3>Phone Step</h3>
       <div>
         <label>
           Phone Number
